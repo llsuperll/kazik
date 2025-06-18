@@ -1,16 +1,23 @@
 let user = null;
 let balance = 100;
 
-if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    user = window.Telegram.WebApp.initDataUnsafe.user;
+if (!window.Telegram) {
+    document.body.innerHTML = "<p>Telegram не найден. Откройте через Telegram.</p>";
+    throw new Error("Telegram API не загружен");
+}
+
+const WebApp = window.Telegram.WebApp;
+
+WebApp.ready();
+
+if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+    user = WebApp.initDataUnsafe.user;
     document.getElementById("user").innerText = `${user.first_name} (${user.id})`;
     document.getElementById("balance").innerText = balance;
 } else {
-    document.body.innerHTML = "<p>Этот сайт должен открываться через Telegram.</p>";
-    throw new Error("Telegram WebApp не обнаружен");
+    document.body.innerHTML = "<p>⚠️ Запущено не через Telegram или нет данных пользователя</p>";
+    throw new Error("WebApp initDataUnsafe.user не найден");
 }
-
 function playGame() {
   const bet = 10;
   if (balance < bet) {
@@ -18,7 +25,6 @@ function playGame() {
     return;
   }
 
-  // Простая игра: 50% шанс выиграть
   const win = Math.random() > 0.5;
   if (win) {
     balance += bet;
@@ -30,7 +36,6 @@ function playGame() {
 
   document.getElementById("balance").innerText = balance;
 
-  // Отправляем данные обратно боту
   Telegram.WebApp.sendData(JSON.stringify({
     action: "update_balance",
     user_id: user.id,
