@@ -29,6 +29,12 @@ jobs:
           poetry run ruff format .
           poetry run isort .
           poetry run flake8 src/ tests/ manage.py
+      - name: Django check
+        run: |
+          poetry run python3 manage.py check
+      - name: Run server
+        run: |
+          poetry run python3 manage.py runserver
       - name: Run Tests
         run: |
           poetry run pytest .

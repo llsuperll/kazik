@@ -1,4 +1,11 @@
-from decouple import config
+from decouple import Csv, Config, RepositoryEnv
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+DOTENV_FILE = BASE_DIR / 'config' / '.env'
+
+config = Config(RepositoryEnv(DOTENV_FILE))
 
 DATABASES = {
     "default": {
